@@ -2,12 +2,12 @@ from random import randint
 
 
 class Array:
-    def __init__(self):
-        self.min = 0
-        self.max = 63
+    MIN = 0
+    MAX = 63
 
-    def get_random(self):
-        v = randint(self.min, self.max)
+    @staticmethod
+    def get_random():
+        v = randint(Array.MIN, Array.MAX)
         return Array.convert_to_array(v)
 
     @staticmethod
@@ -35,7 +35,6 @@ class Array:
 
 
 if __name__ == '__main__':
-    a = Array()
-    print(a.get_random())
+    print(Array.get_random())
     print(Array.convert_to_array(62))
     print(Array.convert_to_list(0, 7))
