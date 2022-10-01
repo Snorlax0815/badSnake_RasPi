@@ -28,6 +28,13 @@ It has an 8×8 RGB LED matrix, a five-button joystick and includes multible sens
 
 The SenseHat API has multible functions to address the LED panel and to detect inputs from the Joystick. 
 
+## Update 2022-01-10
+
+Testing the LED matrix using the set_pixels() method:
+
+![grafik](https://user-images.githubusercontent.com/108017809/193408028-e49ad06e-1df0-4ea1-994d-22ca694958ae.png)
+
+
 ## Sources
 
 https://www.raspberrypi.com/products/sense-hat/
