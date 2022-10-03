@@ -12,7 +12,7 @@ class Array:
         return Array.convert_to_array(v)
 
     @staticmethod
-    def convert_to_list(r, c):
+    def convert_to_list(r, c=None):
         """
         convert array element to list
 
@@ -20,7 +20,9 @@ class Array:
         :param c: colum
         :return: index in list
         """
-        return r*8+c
+        if type(r) == list and c is None:
+            r, c = r
+        return r * 8 + c
 
     @staticmethod
     def convert_to_array(v):
@@ -28,11 +30,67 @@ class Array:
         connvert list to array element
 
         :param v: value in list
-        :return:
+        :return: array element (r,c)
         """
-        row = v/8
+        row = v / 8
         col = v - row * 8
         return row, col
+
+    @staticmethod
+    def is_correct_value_a(r, c):
+        """
+        Is this point within the array
+        :param r: row
+        :param c: colum
+        :return: True /False
+        """
+        v = Array.convert_to_list(r, c)
+        return Array.correct_value(v)
+
+    @staticmethod
+    def is_correct_value(v):
+        """
+        Is this point within the array
+        :param v: index of the list or array element
+        :return: True /False
+        """
+        if type(v) == list:
+            r, c = v
+            v = Array.convert_to_list(r, c)
+
+        return v >= Array.MIN & v <= Array.MAX
+
+
+class LED_Matrix:
+    H = [0, 0, 255]  # Head: blue
+    A = [255, 0, 0]  # Apple: red
+    B = [0, 255, 0]  # Body: green
+    F = [0, 0, 0]  # Free: white
+
+    def __init__(self):
+        self.array = list
+        self.clear()
+
+    def clear(self):
+        for i in range(self.array.len()):
+            self.array[i] = LED_Matrix.F
+
+    def paint_snake(self, snake):
+        for i in range(snake.len()):
+            v = Array.convert_to_list(snake[i])
+            if i == 0:
+                # paint head
+                self.array[v] = H
+            else:
+                # paint body
+                self.array[v] = B
+
+    def paint_apple(self, apple):
+        v = Array.convert_to_list(apple)
+        self.array[v] = A
+
+    def refresh(self, s):
+        s.set_pixels(self.array)
 
 
 if __name__ == '__main__':
