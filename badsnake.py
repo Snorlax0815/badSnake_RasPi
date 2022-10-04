@@ -61,6 +61,25 @@ class Array:
         return v >= Array.MIN & v <= Array.MAX
 
 
+class Snake:
+    S = 1  # south
+    E = 2  # east
+    N = 3  # north
+    W = 4  # west
+
+    def __init__(self):
+        self.points = []
+
+    def set_point(self, p):
+        """
+        set new head point
+
+        :param p:
+        :return:
+        """
+        self.points.insert(0, p)
+
+
 class LED_Matrix:
     H = [0, 0, 255]  # Head: blue
     A = [255, 0, 0]  # Apple: red
