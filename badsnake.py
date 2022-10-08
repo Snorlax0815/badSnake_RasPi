@@ -62,11 +62,6 @@ class Array:
 
 
 class Snake:
-    S = 1  # south
-    E = 2  # east
-    N = 3  # north
-    W = 4  # west
-
     def __init__(self):
         self.points = []
 
@@ -78,6 +73,25 @@ class Snake:
         :return:
         """
         self.points.insert(0, p)
+
+    def move(self, direction, apple=None):
+        """
+        move in the given direction
+
+        :param apple:
+        :param direction:
+        :return:
+        """
+        point = self.points[0]
+        h = Array.convert_to_array(point)
+        if direction == 1:
+            h_neu = [h[0] + 1, h[1]]
+        elif direction == 2:
+            h_neu = [h[0], h[1] + 1]
+        elif direction == 3:
+            h_neu = [h[0] - 1, h[1]]
+        else:
+            h_neu = [h[0], h[1] - 1]
 
 
 class LED_Matrix:
