@@ -93,6 +93,26 @@ class Snake:
         else:
             h_neu = [h[0], h[1] - 1]
 
+        if h_neu in self.points:
+            # bite the body
+            return -1
+
+        if Array.is_correct_value(h_neu) is False:
+            # point is outside
+            return -2
+
+        self.set_point(h_neu)
+        # move forward
+        if apple is not None:
+            if apple != h_neu:
+                # didn't eat the apple
+                self.points.pop()
+                # remove last element
+                return 1
+            else:
+                # ate the apple
+                return 0
+
 
 class LED_Matrix:
     H = [0, 0, 255]  # Head: blue
