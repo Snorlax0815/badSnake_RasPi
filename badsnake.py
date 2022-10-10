@@ -1,3 +1,8 @@
+from sense_hat import SenseHat, ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED
+import signal
+import sys
+import os
+
 from random import randint
 from sense_hat import SenseHat
 
@@ -146,26 +151,50 @@ class LED_Matrix:
         s.set_pixels(self.array)
 
 
+class Game:
+    CTRT = "You lost!"
+    CTRC = [255, 128, 0]
+
+    def __init__(self):
+        self.s = Snake()
+        self.d = LED_Matrix()
+        self.sense = SenseHat()
+        # callback methods for joystick signals
+        self.sense.stick.direction_middle = self.enter
+
+    def enter(self, event):
+        """
+        the joystick event, if direction middle was used
+        :param event: signal from joystick (action: ACTION_PRESSED, ACTION_HELD, ACTION_RELEASED)
+        """
+        if event.action != ACTION_RELEASED:
+            # send keyboard interrupt to active process
+            os.kill(os.getpid(), signal.SIGINT)
+
+    def msg(self, text, color):
+        """
+        shows the message in given color
+        :param text: text to print
+        :param color: color for the text
+        """
+        self.sense.clear()
+        self.sense.show_message(text, text_colour=color)
+        self.sense.clear()
+
+    def run(self):
+        while True:
+            self.refresh()
+            try:
+                # wait, until an event occurs
+                signal.pause()
+            except KeyboardInterrupt:
+                # if CRTL_C event was fired or direction middle was used.
+                # send a "goodbye" message and exit script
+                self.msg(Game.CTRT, Game.CTRC)
+                break;
+
+
 if __name__ == '__main__':
-    H = [0, 0, 255]  # Head: blue
-    A = [255, 0, 0]  # Apple: red
-    B = [0, 255, 0]  # Body: green
-    F = [0, 0, 0]  # Free: white
-    s = SenseHat()
-    array = [
-        F, F, F, F, F, F, F, F,
-        F, F, F, F, F, F, F, F,
-        F, B, B, H, F, A, F, F,
-        F, B, F, F, F, F, F, F,
-        F, F, F, F, F, F, F, F,
-        F, F, F, F, F, F, F, F,
-        F, F, F, F, F, F, F, F,
-        F, F, F, F, F, F, F, F
-    ]
-    s.set_pixels(array)
-"""
-if __name__ == '__main__':
-    print(Array.get_random())
-    print(Array.convert_to_array(62))
-    print(Array.convert_to_list(0, 7))
-"""
+    g = Game()
+    g.run()
+
