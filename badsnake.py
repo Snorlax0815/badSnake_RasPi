@@ -118,23 +118,35 @@ class Snake:
                 # ate the apple
                 return 0
 
+    def get_snake(self):
+        return self.array
+
+H = [0, 0, 255]  # Head: blue
+A = [255, 0, 0]  # Apple: red
+B = [0, 255, 0]  # Body: green
+F = [0, 0, 0]  # Free: white
+
 
 class LED_Matrix:
-    H = [0, 0, 255]  # Head: blue
-    A = [255, 0, 0]  # Apple: red
-    B = [0, 255, 0]  # Body: green
-    F = [0, 0, 0]  # Free: white
-
     def __init__(self):
-        self.array = list
+        self.array = [
+            F, F, F, F, F, F, F, F,
+            F, F, F, F, F, F, F, F,
+            F, B, B, H, F, A, F, F,
+            F, B, F, F, F, F, F, F,
+            F, F, F, F, F, F, F, F,
+            F, F, F, F, F, F, F, F,
+            F, F, F, F, F, F, F, F,
+            F, F, F, F, F, F, F, F
+        ]
         self.clear()
 
     def clear(self):
-        for i in range(self.array.len()):
-            self.array[i] = LED_Matrix.F
+        for i in range(len(self.array)):
+            self.array[i] = F
 
     def paint_snake(self, snake):
-        for i in range(snake.len()):
+        for i in range(len(snake)):
             v = Array.convert_to_list(snake[i])
             if i == 0:
                 # paint head
@@ -147,20 +159,23 @@ class LED_Matrix:
         v = Array.convert_to_list(apple)
         self.array[v] = A
 
-    def refresh(self, s):
-        s.set_pixels(self.array)
-
+    def get_display(self):
+        return self.array
 
 class Game:
     CTRT = "You lost!"
     CTRC = [255, 128, 0]
 
     def __init__(self):
-        self.s = Snake()
+        self.s = Snake()  # snake
         self.d = LED_Matrix()
+        self.a = []  # apple
         self.sense = SenseHat()
         # callback methods for joystick signals
         self.sense.stick.direction_middle = self.enter
+
+    def refresh(self):
+        self.sense.set_pixels(self.d.get_display())
 
     def enter(self, event):
         """
@@ -197,4 +212,3 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.run()
-
