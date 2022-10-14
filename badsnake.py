@@ -12,6 +12,16 @@ class Array:
     MAX = 63
 
     @staticmethod
+    def get_random_snake():
+        p1 = Array.get_random()
+        p2 = [p1[0]]
+        if p1[1] < 7:
+            p2.append(p1[1]+1)
+        else:
+            p2.append(p1[1]-1)
+        return [p1, p2]
+
+    @staticmethod
     def get_random():
         v = randint(Array.MIN, Array.MAX)
         return Array.convert_to_array(v)
@@ -39,7 +49,7 @@ class Array:
         """
         row = v / 8
         col = v - row * 8
-        return row, col
+        return [row, col]
 
     @staticmethod
     def is_correct_value_a(r, c):
@@ -68,7 +78,7 @@ class Array:
 
 class Snake:
     def __init__(self):
-        self.points = []
+        self.points = Array.get_random_snake()
 
     def set_point(self, p):
         """
@@ -169,12 +179,18 @@ class Game:
     def __init__(self):
         self.s = Snake()  # snake
         self.d = LED_Matrix()
-        self.a = []  # apple
+        self.a = None  # apple
+        while self.a is None:
+            self.a = Array.get_random()
+            if self.a in self.s.points:
+                self.a = None
         self.sense = SenseHat()
         # callback methods for joystick signals
         self.sense.stick.direction_middle = self.enter
 
     def refresh(self):
+        self.d.paint_snake(self.s.points)
+        self.d.paint_apple(self.a)
         self.sense.set_pixels(self.d.get_display())
 
     def enter(self, event):
