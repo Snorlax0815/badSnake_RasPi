@@ -103,9 +103,8 @@ class Snake:
         :param direction:
         :return:
         """
-        point = self.points[0]
-        h = point
-        #h = Array.convert_to_array(point)
+        h = self.points[0]
+
         if direction == SOUTH:
             h_neu = [h[0] + 1, h[1]]
         elif direction == EAST:
@@ -221,12 +220,14 @@ class Game:
 
     def moved(self, eaten):
         if eaten == -2 | eaten == -1:
-            self.enter() # lost
+            self.you_lost() # lost
         elif eaten == 0:
+            self.a = None
             self.create_apple()
         self.refresh()
 
     def refresh(self):
+        self.d.clear()
         self.d.paint_snake(self.s.points)
         self.d.paint_apple(self.a)
         self.sense.set_pixels(self.d.get_display())
@@ -245,6 +246,10 @@ class Game:
         if event.action != ACTION_RELEASED:
             # send keyboard interrupt to active process
             os.kill(os.getpid(), signal.SIGINT)
+
+    def you_lost(self):
+        # send keyboard interrupt to active process
+        os.kill(os.getpid(), signal.SIGINT)
 
     def msg(self, text, color):
         """
