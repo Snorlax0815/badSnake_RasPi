@@ -16,9 +16,9 @@ class Array:
         p1 = Array.get_random()
         p2 = [p1[0]]
         if p1[1] < 7:
-            p2.append(p1[1]+1)
+            p2.append(p1[1] + 1)
         else:
-            p2.append(p1[1]-1)
+            p2.append(p1[1] - 1)
         return [p1, p2]
 
     @staticmethod
@@ -76,6 +76,12 @@ class Array:
         return v >= Array.MIN & v <= Array.MAX
 
 
+SOUTH = 1
+EAST = 2
+NORTH = 3
+WEST = 4
+
+
 class Snake:
     def __init__(self):
         self.points = Array.get_random_snake()
@@ -98,12 +104,13 @@ class Snake:
         :return:
         """
         point = self.points[0]
-        h = Array.convert_to_array(point)
-        if direction == 1:
+        h = point
+        #h = Array.convert_to_array(point)
+        if direction == SOUTH:
             h_neu = [h[0] + 1, h[1]]
-        elif direction == 2:
+        elif direction == EAST:
             h_neu = [h[0], h[1] + 1]
-        elif direction == 3:
+        elif direction == NORTH:
             h_neu = [h[0] - 1, h[1]]
         else:
             h_neu = [h[0], h[1] - 1]
@@ -130,6 +137,7 @@ class Snake:
 
     def get_snake(self):
         return self.array
+
 
 H = [0, 0, 255]  # Head: blue
 A = [255, 0, 0]  # Apple: red
@@ -172,6 +180,7 @@ class LED_Matrix:
     def get_display(self):
         return self.array
 
+
 class Game:
     CTRT = "You lost!"
     CTRC = [255, 128, 0]
@@ -180,18 +189,53 @@ class Game:
         self.s = Snake()  # snake
         self.d = LED_Matrix()
         self.a = None  # apple
-        while self.a is None:
-            self.a = Array.get_random()
-            if self.a in self.s.points:
-                self.a = None
+        self.create_apple()
         self.sense = SenseHat()
         # callback methods for joystick signals
+        self.sense.stick.direction_up = self.up
+        self.sense.stick.direction_down = self.down
+        self.sense.stick.direction_left = self.left
+        self.sense.stick.direction_right = self.right
+        self.sense.stick.direction_any = self.refresh
         self.sense.stick.direction_middle = self.enter
+
+    def up(self, event):
+        if event.action != ACTION_RELEASED:
+            eat = self.s.move(NORTH, self.a)
+            self.moved(eat)
+
+    def right(self, event):
+        if event.action != ACTION_RELEASED:
+            eat = self.s.move(EAST, self.a)
+            self.moved(eat)
+
+    def down(self, event):
+        if event.action != ACTION_RELEASED:
+            eat = self.s.move(SOUTH, self.a)
+            self.moved(eat)
+
+    def left(self, event):
+        if event.action != ACTION_RELEASED:
+            eat = self.s.move(WEST, self.a)
+            self.moved(eat)
+
+    def moved(self, eaten):
+        if eaten == -2 | eaten == -1:
+            self.enter() # lost
+        elif eaten == 0:
+            self.create_apple()
+        self.refresh()
 
     def refresh(self):
         self.d.paint_snake(self.s.points)
         self.d.paint_apple(self.a)
         self.sense.set_pixels(self.d.get_display())
+
+    def create_apple(self):
+        while self.a is None:
+            self.a = Array.get_random()
+            if self.a in self.s.points:
+                self.a = None
 
     def enter(self, event):
         """
