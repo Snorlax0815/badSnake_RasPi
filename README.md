@@ -34,6 +34,9 @@ Testing the LED matrix using the set_pixels() method:
 
 ![grafik](https://user-images.githubusercontent.com/108017809/193408028-e49ad06e-1df0-4ea1-994d-22ca694958ae.png)
 
+## Update 2022-29-10
+
+The game is now in a state that I am happy with. It is now a fully functioning experience, complete with player inputs, coloured Objects and bug-free gameplay. What it does not have, however, is a timer function, so that the snake moves automatically, regardless if you use the joystick or not. I have decided not to implement this to stay true to the original version I made in Java. Due to this, the player experiences a slightly different take on the game, allowing them to plan out their moves instead of being forced to pick a direction.  
 
 ## Sources
 
