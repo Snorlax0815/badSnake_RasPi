@@ -69,11 +69,9 @@ class Array:
         :param v: index of the list or array element
         :return: True /False
         """
-        if type(v) == list:
-            r, c = v
-            v = Array.convert_to_list(r, c)
-
-        return v >= Array.MIN & v <= Array.MAX
+        correct = range(8)
+        r, c = v
+        return (r in correct) & (c in correct)
 
 
 SOUTH = 1
@@ -135,7 +133,7 @@ class Snake:
                 return 0
 
     def get_snake(self):
-        return self.array
+        return self.points
 
 
 H = [0, 0, 255]  # Head: blue
@@ -181,8 +179,10 @@ class LED_Matrix:
 
 
 class Game:
-    CTRT = "You lost!"
-    CTRC = [255, 128, 0]
+    LOST = "You lost!"
+    LOSC = [255, 128, 0]
+    WONT = "You won!"
+    WONC = [255, 0, 0]
 
     def __init__(self):
         self.s = Snake()  # snake
@@ -219,10 +219,12 @@ class Game:
             self.moved(eat)
 
     def moved(self, eaten):
-        if eaten == -2 | eaten == -1:
-            self.you_lost() # lost
+        if eaten < 0:
+            self.finished() # lost
         elif eaten == 0:
             self.a = None
+            if len(self.s.get_snake()) == Array.MAX:
+                self.finished()
             self.create_apple()
         self.refresh()
 
@@ -245,9 +247,10 @@ class Game:
         """
         if event.action != ACTION_RELEASED:
             # send keyboard interrupt to active process
-            os.kill(os.getpid(), signal.SIGINT)
+            # os.kill(os.getpid(), signal.SIGINT)
+            self.finished()
 
-    def you_lost(self):
+    def finished(self):
         # send keyboard interrupt to active process
         os.kill(os.getpid(), signal.SIGINT)
 
@@ -270,7 +273,12 @@ class Game:
             except KeyboardInterrupt:
                 # if CRTL_C event was fired or direction middle was used.
                 # send a "goodbye" message and exit script
-                self.msg(Game.CTRT, Game.CTRC)
+                if self.a is None:
+                    # you won!
+                    self.msg(Game.WONT, Game.WONC)
+                else:
+                    # you lost!
+                    self.msg(Game.LOST, Game.LOSC)
                 break;
 
 
